@@ -6,6 +6,30 @@ The **Waybackfetchr** is a command-line tool written in Go that allows users to 
 
 ## Features
 
+```
+└─# waybackfetch -h
+
+
+         _  _  _             _                 _     _______              _     
+        | || || |           | |               | |   (_______)   _        | |    
+        | || || | ____ _   _| | _   ____  ____| |  _ _____ ____| |_  ____| | _  
+        | ||_|| |/ _  | | | | || \ / _  |/ ___) | / )  ___) _  )  _)/ ___) || \ 
+        | |___| ( ( | | |_| | |_) | ( | ( (___| |< (| |  ( (/ /| |_( (___| | | |
+         \______|\_||_|\__  |____/ \_||_|\____)_| \_)_|   \____)\___)____)_| |_|
+                                  (____/                                                    
+
+
+              v1.0 Created by KathanP19
+
+Usage:
+  -u <url>       Fetch snapshots for a single URL
+  -l <file>      File containing list of URLs to fetch snapshots for
+  -o <file>      Output file to save the results
+  --silent       Enable silent mode, only print URLs
+  -h, --help     Show this help message and exit
+```
+
+
 - **Single URL Fetching**: Quickly retrieve all snapshot URLs for a specific web page using the `-u` flag.
 - **Batch Processing**: Process multiple URLs by providing a file containing a list of URLs with the `-l` flag.
 - **Output Options**: Save the retrieved snapshot URLs to a specified output file using the `-o` flag while also printing the results to the console.
