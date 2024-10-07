@@ -21,7 +21,7 @@ The **Waybackfetchr** is a command-line tool written in Go that allows users to 
    ```bash
    go install github.com/KathanP19/waybackfetch@latest
    ```
-OR
+   OR
    ```bash
    git clone https://github.com/KathanP19/waybackfetch.git
    cd waybackfetch
