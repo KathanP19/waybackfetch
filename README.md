@@ -54,7 +54,7 @@ Usage:
 ## Usage
 ```console
 # From STDIN
-echo "https://vulnweb.com" | waybackfetch
+echo "http://testphp.vulnweb.com/login.php" | waybackfetch
 
 # Fetch snapshots for a single URL
 waybackfetch -u <URL>
