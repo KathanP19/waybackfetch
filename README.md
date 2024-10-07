@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Waybackfetchr** is a command-line tool written in Go that allows users to easily retrieve archived snapshots of web pages from the Internet Archive’s Wayback Machine. With this tool, users can fetch all available snapshot URLs for a given webpage or a list of web pages, enabling easy access to historical versions of content.
+The **Waybackfetch** is a command-line tool written in Go that allows users to easily retrieve archived snapshots of web pages from the Internet Archive’s Wayback Machine. With this tool, users can fetch all available snapshot URLs for a given webpage or a list of web pages, enabling easy access to historical versions of content.
 
 ## Features
 
