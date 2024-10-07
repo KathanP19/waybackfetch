@@ -6,7 +6,7 @@ The **Waybackfetch** is a command-line tool written in Go that allows users to e
 
 ## Features
 
-```
+```console
 └─# waybackfetch -h
 
 
@@ -40,19 +40,19 @@ Usage:
 ## Installation
 
 1. Ensure you have Go installed on your machine.
-2. Install the tool using the following command:
-   ```bash
+2. You can install the tool using the following commands:
+   ```console
    go install github.com/KathanP19/waybackfetch@latest
    ```
    OR
-   ```bash
+   ```console
    git clone https://github.com/KathanP19/waybackfetch.git
    cd waybackfetch
    go install
    ```
    
 ## Usage
-```
+```console
 # From STDIN
 echo "https://vulnweb.com" | waybackfetch
 
