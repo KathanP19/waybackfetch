@@ -34,7 +34,6 @@ Usage:
 - **Batch Processing**: Process multiple URLs by providing a file containing a list of URLs with the `-l` flag.
 - **Output Options**: Save the retrieved snapshot URLs to a specified output file using the `-o` flag while also printing the results to the console.
 - **Silent Mode**: Enable a clean output experience with the `--silent` flag to display only the results without additional console messages.
-- **Colorful Banner**: The tool features a vibrant ASCII art banner to enhance the command-line interface experience.
 - **Input from Standard Input**: Supports reading URLs directly from standard input, allowing for flexible usage in scripts or pipelines.
 - **Help Command**: Provides a helpful usage guide and flag descriptions when the `-h` or `--help` flags are used.
 
