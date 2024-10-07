@@ -33,7 +33,7 @@ func printBanner() {
 				  (____/                                                    
 
 ` + reset))
-	fmt.Println(string(yellow + "                Created by KathanP19" + reset))
+	fmt.Println(string(yellow + "              v1.0 Created by KathanP19" + reset))
 	fmt.Println()
 }
 
