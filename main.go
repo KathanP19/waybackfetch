@@ -51,8 +51,10 @@ type Snapshot struct {
 const SnapshotURL = "https://web.archive.org/web/%sif_/%s"
 
 // FetchSnapshotUrls fetches all snapshot URLs for a given URL
-func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, unique bool) error {
+// FetchSnapshotUrls fetches all snapshot URLs for a given URL
+func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, uniqOnly bool) error {
 	baseUrl := "http://web.archive.org/cdx/search/cdx"
+
 	u, err := url.Parse(baseUrl)
 	if err != nil {
 		return fmt.Errorf(red+"error parsing base URL:"+reset+" %v", err)
@@ -82,9 +84,7 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, unique b
 		return fmt.Errorf(red+"error parsing JSON:"+reset+" %v", err)
 	}
 
-	var snapshots []Snapshot
-	uniqSnapshots := make(map[string]bool)
-
+	// Ensure there are elements beyond the first header row
 	if len(data) <= 1 {
 		if !silent {
 			fmt.Println(red + "No snapshots found for the given URL." + reset)
@@ -92,8 +92,12 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, unique b
 		return nil
 	}
 
+	var snapshots []Snapshot
+	uniqSnapshots := make(map[string]bool)
+
 	for _, row := range data[1:] {
 		if len(row) != 4 {
+			// Skipping row with unexpected length
 			if !silent {
 				fmt.Printf(yellow+"Skipping row with unexpected length: %v\n"+reset, row)
 			}
@@ -101,8 +105,9 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, unique b
 		}
 
 		digest := row[2]
-		if unique {
-			// Filter by unique snapshots based on digest
+
+		// Check if only unique snapshots should be returned
+		if uniqOnly {
 			if uniqSnapshots[digest] {
 				continue
 			}
