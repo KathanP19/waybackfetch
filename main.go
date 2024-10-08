@@ -51,7 +51,6 @@ type Snapshot struct {
 const SnapshotURL = "https://web.archive.org/web/%sif_/%s"
 
 // FetchSnapshotUrls fetches all snapshot URLs for a given URL
-// FetchSnapshotUrls fetches all snapshot URLs for a given URL
 func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, uniqOnly bool) error {
 	baseUrl := "http://web.archive.org/cdx/search/cdx"
 
@@ -84,10 +83,12 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, uniqOnly
 		return fmt.Errorf(red+"error parsing JSON:"+reset+" %v", err)
 	}
 
-	// Ensure there are elements beyond the first header row
-	if len(data) <= 1 {
+	// Check if the response contains at least one row beyond the header row
+	if len(data) == 0 {
+		return fmt.Errorf(red + "unexpected empty response from Wayback Machine API" + reset)
+	} else if len(data) == 1 {
 		if !silent {
-			fmt.Println(red + "No snapshots found for the given URL." + reset)
+			fmt.Println(yellow + "No snapshots found for the given URL." + reset)
 		}
 		return nil
 	}
@@ -96,10 +97,10 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, uniqOnly
 	uniqSnapshots := make(map[string]bool)
 
 	for _, row := range data[1:] {
+		// Ensure row contains exactly 4 fields before processing
 		if len(row) != 4 {
-			// Skipping row with unexpected length
 			if !silent {
-				fmt.Printf(yellow+"Skipping row with unexpected length: %v\n"+reset, row)
+				fmt.Printf(yellow+"Skipping malformed row: %v\n"+reset, row)
 			}
 			continue
 		}
@@ -107,12 +108,10 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, uniqOnly
 		digest := row[2]
 
 		// Check if only unique snapshots should be returned
-		if uniqOnly {
-			if uniqSnapshots[digest] {
-				continue
-			}
-			uniqSnapshots[digest] = true
+		if uniqOnly && uniqSnapshots[digest] {
+			continue
 		}
+		uniqSnapshots[digest] = true
 
 		snapshots = append(snapshots, Snapshot{
 			Timestamp: row[0],
@@ -122,6 +121,7 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, uniqOnly
 		})
 	}
 
+	// Output snapshots
 	for _, snapshot := range snapshots {
 		snapshotUrl := fmt.Sprintf(SnapshotURL, snapshot.Timestamp, targetUrl)
 		fmt.Fprintln(output, snapshotUrl)
