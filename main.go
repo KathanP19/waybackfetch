@@ -129,6 +129,7 @@ func main() {
 		fmt.Println("  -u <url>       Fetch snapshots for a single URL")
 		fmt.Println("  -l <file>      File containing list of URLs to fetch snapshots for")
 		fmt.Println("  -o <file>      Output file to save the results")
+		fmt.Println("  -d             Enable unique snapshot filtering by content digest")
 		fmt.Println("  --silent       Enable silent mode, only print URLs")
 		fmt.Println("  -h, --help     Show this help message and exit")
 	}
