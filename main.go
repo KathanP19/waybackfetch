@@ -85,8 +85,18 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, unique b
 	var snapshots []Snapshot
 	uniqSnapshots := make(map[string]bool)
 
+	if len(data) <= 1 {
+		if !silent {
+			fmt.Println(red + "No snapshots found for the given URL." + reset)
+		}
+		return nil
+	}
+
 	for _, row := range data[1:] {
 		if len(row) != 4 {
+			if !silent {
+				fmt.Printf(yellow+"Skipping row with unexpected length: %v\n"+reset, row)
+			}
 			continue
 		}
 
