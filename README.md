@@ -25,6 +25,7 @@ Usage:
   -u <url>       Fetch snapshots for a single URL
   -l <file>      File containing list of URLs to fetch snapshots for
   -o <file>      Output file to save the results
+  -d             Enable unique snapshot filtering by content digest
   --silent       Enable silent mode, only print URLs
   -h, --help     Show this help message and exit
 ```
@@ -35,7 +36,7 @@ Usage:
 - **Output Options**: Save the retrieved snapshot URLs to a specified output file using the `-o` flag while also printing the results to the console.
 - **Silent Mode**: Enable a clean output experience with the `--silent` flag to display only the results without additional console messages.
 - **Input from Standard Input**: Supports reading URLs directly from standard input, allowing for flexible usage in scripts or pipelines.
-- **Help Command**: Provides a helpful usage guide and flag descriptions when the `-h` or `--help` flags are used.
+- **Filter Duplicate Content**: Filter out urls with duplicate snapshot content when the `-d` flags are used.
 
 ## Installation
 
@@ -73,7 +74,7 @@ waybackfetch -h
 ```
 
 ## Todo
-- [x] Add Duplicate content check.
+- [x] Add Duplicate content check. (Feature Added by @dwisiswant0)
 
 ## Contributing
 Contributions are welcome! Please feel free to submit issues or pull requests to enhance the functionality and performance of the tool.
