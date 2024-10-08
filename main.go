@@ -34,7 +34,7 @@ func printBanner() {
 				  (____/                                                    
 
 ` + reset))
-	fmt.Println(string(yellow + "              v1.0 Created by KathanP19" + reset))
+	fmt.Println(string(yellow + "              v1.1 Created by KathanP19" + reset))
 	fmt.Println()
 }
 
@@ -51,9 +51,8 @@ type Snapshot struct {
 const SnapshotURL = "https://web.archive.org/web/%sif_/%s"
 
 // FetchSnapshotUrls fetches all snapshot URLs for a given URL
-func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer) error {
+func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer, unique bool) error {
 	baseUrl := "http://web.archive.org/cdx/search/cdx"
-
 	u, err := url.Parse(baseUrl)
 	if err != nil {
 		return fmt.Errorf(red+"error parsing base URL:"+reset+" %v", err)
@@ -88,17 +87,17 @@ func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer) error {
 
 	for _, row := range data[1:] {
 		if len(row) != 4 {
-			// skipping row with unexpected length
 			continue
 		}
 
 		digest := row[2]
-
-		// skips or mark as seen
-		if uniqSnapshots[digest] {
-			continue
+		if unique {
+			// Filter by unique snapshots based on digest
+			if uniqSnapshots[digest] {
+				continue
+			}
+			uniqSnapshots[digest] = true
 		}
-		uniqSnapshots[digest] = true
 
 		snapshots = append(snapshots, Snapshot{
 			Timestamp: row[0],
@@ -121,6 +120,7 @@ func main() {
 	list := flag.String("l", "", "File containing list of URLs to fetch snapshots for")
 	silent := flag.Bool("silent", false, "Enable silent mode, only print URLs")
 	outputFile := flag.String("o", "", "Output file to write results")
+	unique := flag.Bool("d", false, "Enable unique snapshot filtering by content digest")
 
 	// Custom help message
 	flag.Usage = func() {
@@ -155,7 +155,7 @@ func main() {
 		if !*silent {
 			fmt.Printf(green+"\nFetching snapshots for URL:"+reset+" %s\n", url)
 		}
-		if err := FetchSnapshotUrls(url, *silent, output); err != nil && !*silent {
+		if err := FetchSnapshotUrls(url, *silent, output, *unique); err != nil && !*silent {
 			fmt.Println("Error:", err)
 		}
 	}
