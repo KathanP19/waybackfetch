@@ -73,7 +73,7 @@ waybackfetch -h
 ```
 
 ## Todo
-- [ ] Add Duplicate content check.
+- [x] Add Duplicate content check.
 
 ## Contributing
 Contributions are welcome! Please feel free to submit issues or pull requests to enhance the functionality and performance of the tool.

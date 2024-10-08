@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -40,11 +41,32 @@ func printBanner() {
 // WaybackResponse holds the snapshot timestamps returned from the Wayback Machine API
 type WaybackResponse [][]string
 
-// FetchSnapshotUrls fetches all snapshot URLs for a given URL
-func FetchSnapshotUrls(url string, silent bool, output io.Writer) error {
-	apiUrl := fmt.Sprintf("http://web.archive.org/cdx/search/cdx?url=%s&output=json&fl=timestamp", url)
+type Snapshot struct {
+	Timestamp string `json:"timestamp"`
+	Original  string `json:"original"`
+	Digest    string `json:"digest"`
+	Length    string `json:"length"`
+}
 
-	resp, err := http.Get(apiUrl)
+const SnapshotURL = "https://web.archive.org/web/%sif_/%s"
+
+// FetchSnapshotUrls fetches all snapshot URLs for a given URL
+func FetchSnapshotUrls(targetUrl string, silent bool, output io.Writer) error {
+	baseUrl := "http://web.archive.org/cdx/search/cdx"
+
+	u, err := url.Parse(baseUrl)
+	if err != nil {
+		return fmt.Errorf(red+"error parsing base URL:"+reset+" %v", err)
+	}
+
+	q := u.Query()
+	q.Set("url", targetUrl)
+	q.Set("matchType", "exact")
+	q.Set("output", "json")
+	q.Set("fl", "timestamp,original,digest,length")
+	u.RawQuery = q.Encode()
+
+	resp, err := http.Get(u.String())
 	if err != nil {
 		return fmt.Errorf(red+"error fetching data:"+reset+" %v", err)
 	}
@@ -55,17 +77,42 @@ func FetchSnapshotUrls(url string, silent bool, output io.Writer) error {
 		return fmt.Errorf(red+"error reading response body:"+reset+" %v", err)
 	}
 
-	var timestamps WaybackResponse
-	err = json.Unmarshal(body, &timestamps)
+	var data WaybackResponse
+	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return fmt.Errorf(red+"error parsing JSON:"+reset+" %v", err)
 	}
 
-	for _, ts := range timestamps[1:] {
-		timestamp := ts[0]
-		snapshotUrl := fmt.Sprintf("https://web.archive.org/web/%sif_/%s", timestamp, url)
+	var snapshots []Snapshot
+	uniqSnapshots := make(map[string]bool)
+
+	for _, row := range data[1:] {
+		if len(row) != 4 {
+			// skipping row with unexpected length
+			continue
+		}
+
+		digest := row[2]
+
+		// skips or mark as seen
+		if uniqSnapshots[digest] {
+			continue
+		}
+		uniqSnapshots[digest] = true
+
+		snapshots = append(snapshots, Snapshot{
+			Timestamp: row[0],
+			Original:  row[1],
+			Digest:    digest,
+			Length:    row[3],
+		})
+	}
+
+	for _, snapshot := range snapshots {
+		snapshotUrl := fmt.Sprintf(SnapshotURL, snapshot.Timestamp, targetUrl)
 		fmt.Fprintln(output, snapshotUrl)
 	}
+
 	return nil
 }
 
